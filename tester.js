@@ -14,11 +14,11 @@ const receiverController = require('./lib/receiverController');
 const senderController = require('./lib/senderController');
 
 const RECEIVER_PREFIX = 'mqtt_recv_client_';
-const RECEIVER_COUNT = [10000, 20000, 50000, 60000, 60000];
+const RECEIVER_COUNT = [1, 10000, 20000, 50000, 60000];
 const RECEIVER_CREATE_INTERVAL = 2; //ms
 
 const SENDER_PREFIX = 'mqtt_send_client_';
-const SENDER_COUNT = [6, 10, 100, 500, 1000];
+const SENDER_COUNT = [5, 10, 100, 500, 1000];
 // 송신자 수 array index
 let senderCountIndex = 0;
 const SENDER_CREATE_INTERVAL = 2; //ms
@@ -27,8 +27,11 @@ const SEND_MSG_INTERVAL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 // 메시지 전송 간격 array index
 let sendMsgIntervalIndex = 0;
 
+//const PROTOCOL = 'mqtt';
+const PROTOCOL = 'tls'; //secure
 const SERVER_URL = '192.168.0.101';
-const SERVER_PORT = 2883;
+//const SERVER_PORT = 2883;
+const SERVER_PORT = 8883; //secure
 const CLIENT_LOCAL_ADDRESS = '192.168.0.107';
 const KEEPALIVE = 600; //second
 // 메시지 전송 시간
@@ -140,12 +143,12 @@ function init(receiverCount, senderCount) {
   return new Promise(function(resolve, reject) {
     receiverController
       .init(receiverCount, RECEIVER_CREATE_INTERVAL, SERVER_URL,
-        SERVER_PORT, CLIENT_LOCAL_ADDRESS, KEEPALIVE, RECEIVER_PREFIX)
+        SERVER_PORT, CLIENT_LOCAL_ADDRESS, KEEPALIVE, RECEIVER_PREFIX, PROTOCOL)
       .then(function() {
         log.debug('수신자 초기화됨');
         return senderController.init(senderCount,
           SENDER_CREATE_INTERVAL, SERVER_URL, SERVER_PORT,
-          CLIENT_LOCAL_ADDRESS, KEEPALIVE, SENDER_PREFIX);
+          CLIENT_LOCAL_ADDRESS, KEEPALIVE, SENDER_PREFIX, PROTOCOL);
       })
       .then(function() {
         log.debug('송신자 초기화됨');
